@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المصاريف العائلية المغربية</title>
+    <meta name="description" content="تطبيق إدارة المصاريف العائلية المغربية بالدرهم مع حاسبة الميزانية والإحصائيات المتقدمة">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&family=Amiri:wght@400;700&family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #C41E3A;
+            --secondary: #22c55e;
+            --accent: #f59e0b;
+            --background: #ffffff;
+            --foreground: #1f2937;
+            --muted: #f3f4f6;
+            --muted-foreground: #6b7280;
+            --border: #e5e7eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--background);
+            color: var(--foreground);
+            direction: rtl;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Quranic Header */
+        .quran-header {
+            font-family: 'Amiri', 'Cairo', 'Tajawal', serif;
+            background: linear-gradient(135deg, #f5f3f0 0%, #e8e2db 50%, #ddd4c7 100%);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            color: #8b4513;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+            border-bottom: 3px solid #d4af37;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 24px 16px;
+        }
+
+        .quran-verse {
+            font-size: 1.125rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .quran-reference {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 16px;
+            padding-bottom: 100px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--foreground);
+            text-align: right;
+        }
+
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary), var(--accent), var(--secondary));
+            color: white;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 16px;
+            background: var(--muted);
+            border-radius: 8px;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--muted-foreground);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-align: right;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: right;
+            direction: rtl;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(196, 30, 58, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #b91c3c;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--foreground);
+        }
+
+        .btn-outline:hover {
+            background: var(--muted);
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        /* Category Selector */
+        .category-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .category-btn {
+            padding: 16px 8px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .category-btn:hover {
+            background: var(--muted);
+        }
+
+        .category-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .category-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .category-name {
+            font-size: 0.875rem;
+            line-height: 1.2;
+        }
+
+        /* Expense List */
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--muted);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .expense-details {
+            text-align: right;
+        }
+
+        .expense-amount {
+            font-weight: bold;
+            font-size: 1.125rem;
+            margin-bottom: 4px;
+        }
+
+        .expense-date {
+            font-size: 0.75rem;
+            color: var(--muted-foreground);
+        }
+
+        .expense-category {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-bottom: 4px;
+        }
+
+        .expense-description {
+            font-size: 0.875rem;
+        }
+
+        /* Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 8px;
+            display: flex;
+            justify-content: space-around;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            text-decoration: none;
+            color: var(--muted-foreground);
+            transition: color 0.2s;
+            cursor: pointer;
+            min-width: 60px;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 0.7rem;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        /* Footer */
+        .app-footer {
+            background: var(--muted);
+            padding: 16px;
+            text-align: center;
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+        }
+
+        .developer-credit {
+            font-size: 0.75rem;
+            color: var(--muted-foreground);
+            font-weight: 400;
+        }
+
+        /* Tabs */
+        .tabs {
+            margin-bottom: 24px;
+        }
+
+        .tab-list {
+            display: flex;
+            background: var(--muted);
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 16px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .tab-btn.active {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Progress Bar */
+        .progress {
+            width: 100%;
+            height: 8px;
+            background: var(--muted);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 320px;
+            width: 90%;
+            text-align: center;
+        }
+
+        /* Utility Classes */
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .mb-1 { margin-bottom: 4px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mb-3 { margin-bottom: 12px; }
+        .mb-4 { margin-bottom: 16px; }
+        .mt-2 { margin-top: 8px; }
+        .mt-3 { margin-top: 12px; }
+        .hidden { display: none; }
+        .block { display: block; }
+
+        /* Responsive */
+        @media (min-width: 640px) {
+            .quran-verse {
+                font-size: 1.25rem;
+            }
+            .quran-reference {
+                font-size: 1rem;
+            }
+        }
+
+        /* Category Colors */
+        .category-housing { background: #fecaca; color: #991b1b; }
+        .category-food { background: #bbf7d0; color: #166534; }
+        .category-transport { background: #bfdbfe; color: #1e40af; }
+        .category-health { background: #e9d5ff; color: #7c3aed; }
+        .category-education { background: #fef3c7; color: #d97706; }
+        .category-entertainment { background: #fce7f3; color: #be185d; }
+        .category-parents { background: #fed7aa; color: #ea580c; }
+        .category-clothing { background: #c7d2fe; color: #4338ca; }
+        .category-utilities { background: #f3f4f6; color: #374151; }
+        .category-other { background: #ccfbf1; color: #0f766e; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Quranic Header -->
+        <header class="quran-header">
+            <div>
+                <p class="quran-verse">وَمَنْ يَتَّقِ اللَّهَ يَجْعَلْ لَهُ مَخْرَجًا</p>
+                <p class="quran-verse">وَيَرْزُقْهُ مِنْ حَيْثُ لَا يَحْتَسِبُ</p>
+                <p class="quran-reference">(سورة الطلاق: 2-3)</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Home Page -->
+            <div id="home-page" class="page active">
+                <!-- Welcome Card -->
+                <div class="card welcome-card">
+                    <h1>مرحباً بك</h1>
+                    <p>إدارة المصاريف العائلية المغربية</p>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-label">مصاريف هذا الشهر</div>
+                        <div class="stat-value" id="monthly-total">0.00 درهم</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-label">متوسط يومي</div>
+                        <div class="stat-value" id="daily-average">0.00 درهم</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">إجراءات سريعة</h3>
+                    </div>
+                    <button class="btn btn-primary btn-full mb-3" onclick="showPage('expenses')">
+                        إضافة مصروف جديد
+                    </button>
+                    <div class="btn-group">
+                        <button class="btn btn-outline" onclick="showPage('budget')">الميزانية</button>
+                        <button class="btn btn-outline" onclick="showPage('statistics')">الإحصائيات</button>
+                    </div>
+                </div>
+
+                <!-- Recent Expenses -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">آخر المصاريف</h3>
+                    </div>
+                    <div id="recent-expenses"></div>
+                </div>
+            </div>
+
+            <!-- Expenses Page -->
+            <div id="expenses-page" class="page hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">إضافة مصروف جديد</h2>
+                    </div>
+                    
+                    <form id="expense-form">
+                        <div class="form-group">
+                            <label class="form-label">المبلغ (بالدرهم)</label>
+                            <input type="number" class="form-input" id="expense-amount" placeholder="0.00" step="0.01" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">فئة المصروف</label>
+                            <div class="category-grid" id="category-selector">
+                                <!-- Categories will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">وصف المصروف</label>
+                            <textarea class="form-input form-textarea" id="expense-description" placeholder="اكتب وصف المصروف هنا..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">التاريخ</label>
+                            <input type="date" class="form-input" id="expense-date" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-full">إضافة المصروف</button>
+                    </form>
+                </div>
+
+                <!-- Expense List -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">قائمة المصاريف</h3>
+                    </div>
+                    <div id="expense-list"></div>
+                </div>
+            </div>
+
+            <!-- Budget Page -->
+            <div id="budget-page" class="page hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">حاسبة الميزانية</h2>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">الدخل الشهري (بالدرهم)</label>
+                        <input type="number" class="form-input" id="monthly-income" placeholder="0.00" step="0.01">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">هدف الإدخار الشهري (بالدرهم)</label>
+                        <input type="number" class="form-input" id="savings-goal" placeholder="0.00" step="0.01">
+                    </div>
+
+                    <button class="btn btn-primary btn-full" onclick="saveBudget()">حفظ إعدادات الميزانية</button>
+                </div>
+
+                <!-- Budget Overview -->
+                <div class="card" id="budget-overview">
+                    <div class="card-header">
+                        <h3 class="card-title">نظرة عامة على الميزانية</h3>
+                    </div>
+                    <div id="budget-stats"></div>
+                </div>
+            </div>
+
+            <!-- Statistics Page -->
+            <div id="statistics-page" class="page hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">الإحصائيات المتقدمة</h2>
+                    </div>
+                    <div id="statistics-content"></div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settings-page" class="page hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">الإعدادات</h2>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button class="btn btn-outline btn-full mb-2" onclick="exportToCSV()">تصدير إلى CSV</button>
+                        <button class="btn btn-outline btn-full mb-2" onclick="exportToJSON()">تصدير إلى JSON</button>
+                        <button class="btn btn-primary btn-full mb-2" onclick="exportAllData()">نسخة احتياطية كاملة</button>
+                        <button class="btn btn-outline btn-full mb-2" onclick="importData()">استيراد البيانات</button>
+                        <button class="btn" style="background: #ef4444; color: white;" onclick="clearAllData()">حذف جميع البيانات</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">معلومات التطبيق</h3>
+                    </div>
+                    <p><strong>الإصدار:</strong> 1.0.0</p>
+                    <p><strong>المطور:</strong> Yassine Bouaida</p>
+                    <p><strong>التاريخ:</strong> يناير 2025</p>
+                    <p class="text-muted">تطبيق مصمم خصيصاً للعائلات المغربية لإدارة المصاريف بالدرهم</p>
+                    <p class="text-muted" style="font-size: 0.75rem; margin-top: 16px;">
+                        تم تطويره بمحبة لمساعدة الأسر المغربية في إدارة مصاريفهم بطريقة بسيطة وعملية
+                    </p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="showPage('home')">
+                <div class="nav-icon">🏠</div>
+                <div class="nav-label">الرئيسية</div>
+            </div>
+            <div class="nav-item" onclick="showPage('expenses')">
+                <div class="nav-icon">➕</div>
+                <div class="nav-label">المصاريف</div>
+            </div>
+            <div class="nav-item" onclick="showPage('budget')">
+                <div class="nav-icon">🧮</div>
+                <div class="nav-label">الميزانية</div>
+            </div>
+            <div class="nav-item" onclick="showPage('statistics')">
+                <div class="nav-icon">📊</div>
+                <div class="nav-label">الإحصائيات</div>
+            </div>
+            <div class="nav-item" onclick="showPage('settings')">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-label">الإعدادات</div>
+            </div>
+        </nav>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p class="developer-credit">تم التطوير بواسطة Yassine Bouaida</p>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="modal">
+        <div class="modal-content">
+            <p id="toast-message"></p>
+            <button class="btn btn-primary mt-3" onclick="hideToast()">حسناً</button>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        let expenses = JSON.parse(localStorage.getItem('moroccan_expenses') || '[]');
+        let budget = JSON.parse(localStorage.getItem('moroccan_budget') || '{}');
+        let selectedCategory = '';
+
+        // Expense Categories
+        const categories = [
+            { id: 'housing', name: 'الكراء والسكن', icon: '🏠', color: 'category-housing' },
+            { id: 'food', name: 'المنزل والمعيشة', icon: '🍽️', color: 'category-food' },
+            { id: 'parents', name: 'مصروف الوالدين', icon: '👨‍👩‍👧‍👦', color: 'category-parents' },
+            { id: 'transport', name: 'مصروف الرجل', icon: '🚗', color: 'category-transport' },
+            { id: 'clothing', name: 'مصروف المرأة', icon: '👕', color: 'category-clothing' },
+            { id: 'utilities', name: 'كهرماء', icon: '💡', color: 'category-utilities' },
+            { id: 'other', name: 'أبولمو', icon: '🔥', color: 'category-other' },
+            { id: 'education', name: 'الإدخار', icon: '💰', color: 'category-education' },
+            { id: 'health', name: 'التطبيب', icon: '⚕️', color: 'category-health' },
+            { id: 'entertainment', name: 'الملابس', icon: '👔', color: 'category-entertainment' }
+        ];
+
+        // Initialize App
+        function initApp() {
+            setupCategorySelector();
+            setupExpenseForm();
+            updateHomeStats();
+            renderRecentExpenses();
+            updateBudgetOverview();
+            document.getElementById('expense-date').value = new Date().toISOString().split('T')[0];
+        }
+
+        // Navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.add('hidden');
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId + '-page').classList.remove('hidden');
+            document.getElementById(pageId + '-page').classList.add('active');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.nav-item').classList.add('active');
+            
+            // Update page-specific content
+            if (pageId === 'statistics') {
+                updateStatistics();
+            } else if (pageId === 'expenses') {
+                renderExpenseList();
+            }
+        }
+
+        // Category Selector
+        function setupCategorySelector() {
+            const selector = document.getElementById('category-selector');
+            selector.innerHTML = '';
+            
+            categories.forEach(category => {
+                const btn = document.createElement('div');
+                btn.className = 'category-btn';
+                btn.onclick = () => selectCategory(category.id);
+                btn.innerHTML = `
+                    <span class="category-icon">${category.icon}</span>
+                    <span class="category-name">${category.name}</span>
+                `;
+                selector.appendChild(btn);
+            });
+        }
+
+        function selectCategory(categoryId) {
+            selectedCategory = categoryId;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.category-btn').classList.add('active');
+        }
+
+        // Expense Form
+        function setupExpenseForm() {
+            document.getElementById('expense-form').onsubmit = function(e) {
+                e.preventDefault();
+                addExpense();
+            };
+        }
+
+        function addExpense() {
+            const amount = parseFloat(document.getElementById('expense-amount').value);
+            const description = document.getElementById('expense-description').value.trim();
+            const date = document.getElementById('expense-date').value;
+
+            if (!amount || amount <= 0) {
+                showToast('يجب إدخال مبلغ صحيح');
+                return;
+            }
+
+            if (!selectedCategory) {
+                showToast('يجب اختيار فئة المصروف');
+                return;
+            }
+
+            if (!description || description.length < 2) {
+                showToast('يجب إدخال وصف المصروف (حرفين على الأقل)');
+                return;
+            }
+
+            const expense = {
+                id: Date.now().toString(),
+                amount: amount,
+                category: selectedCategory,
+                description: description,
+                date: date,
+                createdAt: new Date().toISOString()
+            };
+
+            expenses.unshift(expense);
+            saveExpenses();
+            
+            showToast(`تم إضافة مصروف بقيمة ${formatCurrency(amount)}`);
+            
+            // Reset form
+            document.getElementById('expense-form').reset();
+            document.getElementById('expense-date').value = new Date().toISOString().split('T')[0];
+            selectedCategory = '';
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            updateHomeStats();
+            renderRecentExpenses();
+            renderExpenseList();
+        }
+
+        // Expense Management
+        function deleteExpense(id) {
+            if (confirm('هل أنت متأكد من حذف هذا المصروف؟')) {
+                expenses = expenses.filter(exp => exp.id !== id);
+                saveExpenses();
+                updateHomeStats();
+                renderRecentExpenses();
+                renderExpenseList();
+                showToast('تم حذف المصروف بنجاح');
+            }
+        }
+
+        function renderExpenseList() {
+            const container = document.getElementById('expense-list');
+            if (!container) return;
+            
+            if (expenses.length === 0) {
+                container.innerHTML = '<p class="text-center">لا توجد مصاريف</p>';
+                return;
+            }
+
+            container.innerHTML = expenses.map(expense => `
+                <div class="expense-item">
+                    <div class="expense-actions">
+                        <button onclick="deleteExpense('${expense.id}')" style="background: #ef4444; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer;">🗑️</button>
+                    </div>
+                    <div class="expense-details">
+                        <div class="expense-amount">${formatCurrency(expense.amount)}</div>
+                        <div class="expense-date">${formatDate(expense.date)}</div>
+                        <div class="expense-category ${getCategoryColor(expense.category)}">
+                            ${getCategoryIcon(expense.category)} ${getCategoryName(expense.category)}
+                        </div>
+                        <div class="expense-description">${expense.description}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderRecentExpenses() {
+            const container = document.getElementById('recent-expenses');
+            const recentExpenses = expenses.slice(0, 5);
+            
+            if (recentExpenses.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center">
+                        <p class="mb-3">لا توجد مصاريف بعد</p>
+                        <button class="btn btn-primary" onclick="showPage('expenses')">أضف أول مصروف</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = recentExpenses.map(expense => `
+                <div class="expense-item">
+                    <div class="expense-details">
+                        <div class="expense-amount">${formatCurrency(expense.amount)}</div>
+                        <div class="expense-date">${formatDate(expense.date)}</div>
+                        <div class="expense-category ${getCategoryColor(expense.category)}">
+                            ${getCategoryIcon(expense.category)} ${getCategoryName(expense.category)}
+                        </div>
+                        <div class="expense-description">${expense.description}</div>
+                    </div>
+                </div>
+            `).join('') + `
+                <button class="btn btn-outline btn-full mt-3" onclick="showPage('expenses')">
+                    عرض جميع المصاريف
+                </button>
+            `;
+        }
+
+        // Budget Management
+        function saveBudget() {
+            const monthlyIncome = parseFloat(document.getElementById('monthly-income').value) || 0;
+            const savingsGoal = parseFloat(document.getElementById('savings-goal').value) || 0;
+            
+            budget = {
+                monthlyIncome: monthlyIncome,
+                savingsGoal: savingsGoal,
+                month: getCurrentMonth()
+            };
+            
+            localStorage.setItem('moroccan_budget', JSON.stringify(budget));
+            updateBudgetOverview();
+            showToast('تم حفظ إعدادات الميزانية');
+        }
+
+        function updateBudgetOverview() {
+            if (!budget.monthlyIncome) {
+                document.getElementById('budget-overview').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('budget-overview').style.display = 'block';
+            const currentMonth = getCurrentMonth();
+            const monthlyExpenses = getMonthlyExpenses(currentMonth);
+            const totalExpenses = monthlyExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+            const remaining = budget.monthlyIncome - totalExpenses - (budget.savingsGoal || 0);
+            const budgetUtilization = (totalExpenses / budget.monthlyIncome) * 100;
+
+            document.getElementById('budget-stats').innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-card" style="background: #bbf7d0;">
+                        <div class="stat-label">الدخل الشهري</div>
+                        <div class="stat-value" style="color: #166534;">${formatCurrency(budget.monthlyIncome)}</div>
+                    </div>
+                    <div class="stat-card" style="background: #fecaca;">
+                        <div class="stat-label">المصاريف الحالية</div>
+                        <div class="stat-value" style="color: #991b1b;">${formatCurrency(totalExpenses)}</div>
+                    </div>
+                    <div class="stat-card" style="background: #bfdbfe;">
+                        <div class="stat-label">هدف الإدخار</div>
+                        <div class="stat-value" style="color: #1e40af;">${formatCurrency(budget.savingsGoal || 0)}</div>
+                    </div>
+                    <div class="stat-card" style="background: ${remaining >= 0 ? '#bbf7d0' : '#fecaca'};">
+                        <div class="stat-label">المتبقي</div>
+                        <div class="stat-value" style="color: ${remaining >= 0 ? '#166534' : '#991b1b'};">${formatCurrency(remaining)}</div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>استخدام الميزانية</span>
+                        <span>${budgetUtilization.toFixed(1)}%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar" style="width: ${Math.min(budgetUtilization, 100)}%;"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Statistics
+        function updateStatistics() {
+            const currentMonth = getCurrentMonth();
+            const monthlyExpenses = getMonthlyExpenses(currentMonth);
+            const totalExpenses = monthlyExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+            
+            // Category breakdown
+            const categoryBreakdown = {};
+            categories.forEach(cat => {
+                categoryBreakdown[cat.id] = 0;
+            });
+            
+            monthlyExpenses.forEach(expense => {
+                categoryBreakdown[expense.category] = (categoryBreakdown[expense.category] || 0) + expense.amount;
+            });
+
+            const topCategories = Object.entries(categoryBreakdown)
+                .filter(([, amount]) => amount > 0)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 5);
+
+            document.getElementById('statistics-content').innerHTML = `
+                <div class="mb-4">
+                    <h3 class="text-right mb-3">توزيع المصاريف - ${currentMonth}</h3>
+                    ${topCategories.length === 0 ? '<p class="text-center">لا توجد مصاريف لعرضها</p>' : 
+                        topCategories.map(([categoryId, amount]) => {
+                            const percentage = (amount / totalExpenses) * 100;
+                            return `
+                                <div class="mb-3">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                        <div>
+                                            <span class="expense-category ${getCategoryColor(categoryId)}">
+                                                ${getCategoryIcon(categoryId)} ${getCategoryName(categoryId)}
+                                            </span>
+                                        </div>
+                                        <div class="text-right">
+                                            <span style="font-weight: bold;">${formatCurrency(amount)}</span>
+                                            <span style="font-size: 0.75rem; color: #6b7280; margin-right: 8px;">(${percentage.toFixed(1)}%)</span>
+                                        </div>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: ${percentage}%;"></div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')
+                    }
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">متوسط المصاريف اليومية</div>
+                        <div class="stat-value">${formatCurrency(totalExpenses / new Date().getDate())}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">عدد المعاملات</div>
+                        <div class="stat-value">${monthlyExpenses.length}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Home Stats
+        function updateHomeStats() {
+            const currentMonth = getCurrentMonth();
+            const monthlyExpenses = getMonthlyExpenses(currentMonth);
+            const totalExpenses = monthlyExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+            const dailyAverage = totalExpenses / new Date().getDate();
+            
+            document.getElementById('monthly-total').textContent = formatCurrency(totalExpenses);
+            document.getElementById('daily-average').textContent = formatCurrency(dailyAverage);
+        }
+
+        // Data Export/Import
+        function exportToCSV() {
+            const headers = ['التاريخ', 'الفئة', 'الوصف', 'المبلغ (درهم)'];
+            const csvContent = [
+                headers.join(','),
+                ...expenses.map(expense => [
+                    expense.date,
+                    getCategoryName(expense.category),
+                    `"${expense.description}"`,
+                    expense.amount.toString()
+                ].join(','))
+            ].join('\n');
+
+            downloadFile(csvContent, `مصاريف_${new Date().toISOString().split('T')[0]}.csv`, 'text/csv');
+            showToast('تم تصدير البيانات إلى ملف CSV');
+        }
+
+        function exportToJSON() {
+            const data = {
+                expenses: expenses,
+                exportDate: new Date().toISOString(),
+                totalAmount: expenses.reduce((sum, exp) => sum + exp.amount, 0),
+                count: expenses.length
+            };
+
+            downloadFile(JSON.stringify(data, null, 2), `مصاريف_${new Date().toISOString().split('T')[0]}.json`, 'application/json');
+            showToast('تم تصدير البيانات إلى ملف JSON');
+        }
+
+        function exportAllData() {
+            const data = {
+                expenses: expenses,
+                budget: budget,
+                exportDate: new Date().toISOString()
+            };
+
+            downloadFile(JSON.stringify(data, null, 2), `نسخة_احتياطية_${new Date().toISOString().split('T')[0]}.json`, 'application/json');
+            showToast('تم إنشاء النسخة الاحتياطية');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        if (data.expenses) {
+                            expenses = data.expenses;
+                            saveExpenses();
+                        }
+                        if (data.budget) {
+                            budget = data.budget;
+                            localStorage.setItem('moroccan_budget', JSON.stringify(budget));
+                        }
+                        
+                        updateHomeStats();
+                        renderRecentExpenses();
+                        updateBudgetOverview();
+                        showToast('تم استيراد البيانات بنجاح');
+                    } catch (error) {
+                        showToast('تعذر استيراد البيانات. تأكد من صحة الملف.');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        function clearAllData() {
+            if (confirm('هل أنت متأكد من حذف جميع البيانات؟ هذا الإجراء لا يمكن التراجع عنه.')) {
+                localStorage.clear();
+                expenses = [];
+                budget = {};
+                updateHomeStats();
+                renderRecentExpenses();
+                updateBudgetOverview();
+                showToast('تم حذف جميع البيانات');
+            }
+        }
+
+        // Utility Functions
+        function formatCurrency(amount) {
+            return `${amount.toLocaleString('ar-MA', { minimumFractionDigits: 2 })} درهم`;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ar-MA');
+        }
+
+        function getCurrentMonth() {
+            return new Date().toISOString().substring(0, 7);
+        }
+
+        function getMonthlyExpenses(month) {
+            return expenses.filter(expense => expense.date.startsWith(month));
+        }
+
+        function getCategoryName(categoryId) {
+            const category = categories.find(cat => cat.id === categoryId);
+            return category ? category.name : categoryId;
+        }
+
+        function getCategoryIcon(categoryId) {
+            const category = categories.find(cat => cat.id === categoryId);
+            return category ? category.icon : '📝';
+        }
+
+        function getCategoryColor(categoryId) {
+            const category = categories.find(cat => cat.id === categoryId);
+            return category ? category.color : 'category-other';
+        }
+
+        function saveExpenses() {
+            localStorage.setItem('moroccan_expenses', JSON.stringify(expenses));
+        }
+
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function showToast(message) {
+            document.getElementById('toast-message').textContent = message;
+            document.getElementById('toast').classList.add('active');
+        }
+
+        function hideToast() {
+            document.getElementById('toast').classList.remove('active');
+        }
+
+        // Load budget data on page load
+        function loadBudgetData() {
+            if (budget.monthlyIncome) {
+                document.getElementById('monthly-income').value = budget.monthlyIncome;
+            }
+            if (budget.savingsGoal) {
+                document.getElementById('savings-goal').value = budget.savingsGoal;
+            }
+        }
+
+        // Initialize app when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initApp();
+            loadBudgetData();
+        });
+    </script>
+</body>
+</html>
